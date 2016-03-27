@@ -174,6 +174,14 @@ public final class FusumaViewController: UIViewController, FSCameraViewDelegate,
         
         delegate?.fusumaCameraRollUnauthorized()
     }
+    
+    public func imageCropViewImageSelected(image: UIImage) {
+        delegate?.fusumaImageSelected(image)
+        
+        self.dismissViewControllerAnimated(true) { () -> Void in
+            self.delegate?.fusumaDismissedWithImage?(image)
+        }
+    }
 }
 
 private extension FusumaViewController {
