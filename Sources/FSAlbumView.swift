@@ -12,6 +12,8 @@ import Photos
 public protocol FSAlbumViewDelegate: class {
     
     func albumViewCameraRollUnauthorized()
+    func imageCropViewImageSelected(image: UIImage)
+    
 }
 
 final class FSAlbumView: UIView, UICollectionViewDataSource, UICollectionViewDelegate, PHPhotoLibraryChangeObserver, UIGestureRecognizerDelegate {
@@ -63,6 +65,10 @@ final class FSAlbumView: UIView, UICollectionViewDataSource, UICollectionViewDel
         let panGesture      = UIPanGestureRecognizer(target: self, action: "panned:")
         panGesture.delegate = self
         self.addGestureRecognizer(panGesture)
+        
+        let tapGesture = UIPanGestureRecognizer(target: self, action: "tapped:")
+        tapGesture.delegate = self
+        self.imageCropView.addGestureRecognizer(panGesture)
         
         collectionViewConstraintHeight.constant = self.frame.height - imageCropView.frame.height - imageCropViewOriginalConstraintTop
         imageCropViewConstraintTop.constant = 50
@@ -223,6 +229,21 @@ final class FSAlbumView: UIView, UICollectionViewDataSource, UICollectionViewDel
             }
         }
         
+        
+    }
+    
+    func tapped(sender: UITapGestureRecognizer) {
+        
+        let view = self.imageCropView
+        
+        UIGraphicsBeginImageContextWithOptions(view.frame.size, true, 0)
+        let context = UIGraphicsGetCurrentContext()
+        CGContextTranslateCTM(context, -self.imageCropView.contentOffset.x, -self.imageCropView.contentOffset.y)
+        view.layer.renderInContext(context!)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        delegate?.imageCropViewImageSelected(image)
         
     }
     
