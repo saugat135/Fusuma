@@ -19,6 +19,7 @@ import UIKit
 
 public var fusumaTintColor       = UIColor.hex("#009688", alpha: 1.0)
 public var fusumaBackgroundColor = UIColor.hex("#212121", alpha: 1.0)
+public var shouldDismiss = true
 
 
 public enum FusumaMode {
@@ -141,22 +142,33 @@ public final class FusumaViewController: UIViewController, FSCameraViewDelegate,
     }
     
     @IBAction func doneButtonPressed(sender: UIButton) {
-        
+        doneButtonActionHandler()
+    }
+    
+    public func doneButtonActionHandler() {
         let view = albumView.imageCropView
         
+        let image = getImageFromView(view)
+        
+        delegate?.fusumaImageSelected(image)
+        
+        guard shouldDismiss == true else { return }
+        self.dismissViewControllerAnimated(true, completion: {
+            
+            self.delegate?.fusumaDismissedWithImage?(image)
+        })
+        
+    }
+    
+    func getImageFromView(view: UIView) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(view.frame.size, true, 0)
         let context = UIGraphicsGetCurrentContext()
         CGContextTranslateCTM(context, -albumView.imageCropView.contentOffset.x, -albumView.imageCropView.contentOffset.y)
         view.layer.renderInContext(context!)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        
-        delegate?.fusumaImageSelected(image)
-        
-        self.dismissViewControllerAnimated(true, completion: {
-            
-            self.delegate?.fusumaDismissedWithImage?(image)
-        })
+        return image
+
     }
     
     // MARK: FSCameraViewDelegate
@@ -175,12 +187,15 @@ public final class FusumaViewController: UIViewController, FSCameraViewDelegate,
         delegate?.fusumaCameraRollUnauthorized()
     }
     
-    public func imageCropViewImageSelected(image: UIImage) {
+    public func imageCropViewImageTapped() {
+        let view = albumView.imageCropView
+        let image = getImageFromView(view)
         delegate?.fusumaImageSelected(image)
-        
-        self.dismissViewControllerAnimated(true) { () -> Void in
+        guard shouldDismiss == true else { return }
+        self.dismissViewControllerAnimated(true, completion: {
+            
             self.delegate?.fusumaDismissedWithImage?(image)
-        }
+        })
     }
 }
 
