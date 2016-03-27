@@ -19,8 +19,6 @@ import UIKit
 
 public var fusumaTintColor       = UIColor.hex("#009688", alpha: 1.0)
 public var fusumaBackgroundColor = UIColor.hex("#212121", alpha: 1.0)
-public var shouldDismiss = true
-
 
 public enum FusumaMode {
     case Camera
@@ -32,6 +30,7 @@ public final class FusumaViewController: UIViewController, FSCameraViewDelegate,
     var defaultMode: FusumaMode?
     private var mode: FusumaMode?
     var willFilter = true
+    public var shouldDismiss = true
 
     @IBOutlet weak var photoLibraryViewerContainer: UIView!
     @IBOutlet weak var cameraShotContainer: UIView!
