@@ -79,7 +79,7 @@ final class FSCameraView: UIView, UIGestureRecognizerDelegate {
             
             // Focus View
             self.focusView         = UIView(frame: CGRect(x: 0, y: 0, width: 90, height: 90))
-            let tapRecognizer      = UITapGestureRecognizer(target: self, action:Selector("focus:"))
+            let tapRecognizer      = UITapGestureRecognizer(target: self, action:#selector(focus))
             tapRecognizer.delegate = self
             self.previewViewContainer.addGestureRecognizer(tapRecognizer)
             
@@ -251,7 +251,7 @@ final class FSCameraView: UIView, UIGestureRecognizerDelegate {
 
 private extension FSCameraView {
     
-    func focus(recognizer: UITapGestureRecognizer) {
+    @objc func focus(recognizer: UITapGestureRecognizer) {
         
         let point = recognizer.locationInView(self)
         let viewsize = self.bounds.size
@@ -306,6 +306,7 @@ private extension FSCameraView {
         do {
             
             if let device = device {
+                
                 guard device.hasFlash else { return }
                 
                 try device.lockForConfiguration()
