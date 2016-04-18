@@ -141,8 +141,22 @@ public final class FusumaViewController: UIViewController, FSCameraViewDelegate,
     }
     
     @IBAction func photoButtonPressed(sender: UIButton) {
+        if isAuthorizedCamera() {
+            changeMode(FusumaMode.Camera)
+        } else {
+            self.delegate?.fusumaCameraRollUnauthorized()
+        }
+    }
     
-        changeMode(FusumaMode.Camera)
+    private func isAuthorizedCamera() -> Bool {
+        let authStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
+        switch authStatus {
+        case .Authorized:
+            return true
+        default:
+            return false
+            
+        }
     }
     
     @IBAction func doneButtonPressed(sender: UIButton) {
